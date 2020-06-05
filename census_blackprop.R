@@ -5,13 +5,13 @@ tract.blackprop = function (state, county, tract.data.dir = NULL)
   # Arguments:
   #         state: Two digit state fips code. It is a charactor vector
   #        county: Three digit county fips code. It is a character vector
-  #         tract.data.dir: Directory where tract data is stored. Currently it is
-  #                                tract.data.dir = '/Volumes/Seagate Backup Plus Drive/census-tracts-2010/unzipFiles/'
+  #         tract.data.dir: Directory where tract data is stored. Downloading geometry takes time so you might like to store it locally. 
+  
   # Returns:
   #         tract.blackprop: Tract level population info for the state and counties
 
   # Example:
-  #         t.b = tract.blackprop ('26', c('123', '234', '012'), '/Volumes/Seagate Backup Plus Drive/census-tracts-2010/unzipFiles)
+  #         t.b = tract.blackprop ('26', c('123', '234', '012'), 'census-tracts-2010/)
 
   ###
   projString = "+proj=aea +lat_1=20 +lat_2=60 +lat_0=40 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs"
@@ -43,14 +43,13 @@ tract.blackprop = function (state, county, tract.data.dir = NULL)
   # If we do not provide the local shape file directory tract.data.dir
   if (is.null (tract.data.dir))  {
 
-  # We can get the census geography with geometry=T in 'get_decennial' above, but I prefer it this way - get tract boundaries
+  # We can get the census geography with geometry=T in 'get_decennial' above, but I prefer it this way. Get tract boundaries
 
   tc = tracts(state = state, county =county, year=2010, class = 'sf')
   tc = tc['GEOID10']
   } else {
 
-  # I keep getting erros in the code above to get tract geography. So, I downloaded the data
-  # and am using it locally.
+  # If you have it locally 
   tract.geog.dir1 = paste(tract.data.dir, 'tl_2010_', state, '_tract10/', sep='')
   file.name = paste('tl_2010_', state, '_tract10', sep='')
   tc = st_read(tract.geog.dir1, file.name, stringsAsFactors = F)
@@ -63,7 +62,6 @@ tract.blackprop = function (state, county, tract.data.dir = NULL)
 
   # There are some errors here in tract geometry, for example in tc[741,] for ALABAMA there is a self intersection.
   # So tc is coming back as multipolygon. Try the code below for 'AL' state
-
   # p1 = st_cast(tc[741,], 'POLYGON')
   # g1 = ggplot() + geom_sf(data = p1[1,], col = 'red') + geom_sf(data = p1[2,])
   # g1
@@ -73,10 +71,10 @@ tract.blackprop = function (state, county, tract.data.dir = NULL)
   tract.blackprop = left_join(tc, black.prop, by=c('GEOID10' = 'GEOID'))
   tract.blackprop = st_transform(tract.blackprop, projString)
 
-  # Remove NA  - we will have to be careful with this step
+  # Remove NA  - we will have to be careful with this step, please see the note below.
 
   ### NOTE (I do not remember the original source)
-
+  
   # As originally designed, spatial autocorrelation tests assumed there are no neighborless units in the
   # study area.  When this assumption is violated, the size of n may be adjusted (reduced) to reflect
   # the fact that some units are effectively being ignored.  Not doing so will generally bias the
