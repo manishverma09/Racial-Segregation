@@ -1,6 +1,6 @@
 modified.localG = function(black_population, total_population,  listw, method='kershaw', zero.policy=NULL, spChk=NULL, return_internals=FALSE, GeoDa=FALSE)
   # This function is based on the original script from the SPDEP package. I am modifying it so that I can use it with ratios.
-  # I am leaving a number of arguments there, although as of July 25 we do not use them. But I do intend to later expand the code and use them.
+  # I am leaving a number of parameters here, although as of July 25 we do not use them. But I do intend to later expand the code and use them.
 
   # Arguments:
   #          black_population: Population of blacks in a geography. Numeric.
@@ -15,7 +15,10 @@ modified.localG = function(black_population, total_population,  listw, method='k
   # Getis-Ord calculates deviation of 'local mean' from the global mean. The global mean in the usual case is the mean of the entire data.
   # However, when we use ratios (e.g. proportions of blacks in the total population) we would like to estimate the difference between the
   # local proportion and the global mean proportion. The global mean proportion is not the mean of the distribution of the data, rather it has a
-  # nonlinear realtionship with the data.
+  # nonlinear realtionship with the data. 
+  
+  # Note that using global mean can also produce negative underroot in the denominator. 
+  
   # So we are interested in deviation from m(X), i.e.  local(x) - m(X) where m(X) is not mean, median etc. but some nonlinear function of all x
 
   #  In the code below I calculate the difference between the local ratio and the global proportion
@@ -59,7 +62,7 @@ modified.localG = function(black_population, total_population,  listw, method='k
   stopifnot(is.logical(zero.policy))
 
 
-  ### 2. PROCESSING OPTIONS (Notations here are a mix of the original SPDEP code, the two papers from Getis-Ord publiched in 1992 and 1995 (see at the end for reference)
+  ### 2. PROCESSING OPTIONS (Notations here are a mix of the original SPDEP code, the two papers from Getis-Ord publiched in 1992 and 1995
   #     and the ArcGIS site https://pro.arcgis.com/en/pro-app/tool-reference/spatial-statistics/h-how-hot-spot-analysis-getis-ord-gi-spatial-stati.htm (since most people use this))
 
   gstari = FALSE
@@ -98,3 +101,5 @@ modified.localG = function(black_population, total_population,  listw, method='k
   }
   return (gstar)
   }
+
+   
