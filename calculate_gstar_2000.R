@@ -8,14 +8,14 @@ library(dplyr)
 library(data.table)
 
 # API
-#apiKey = 'your API key here as a string'
-# readRenviron("~/.Renviron")       # Yon need to do this once
+census_api_key = 'your census API key here as a string'
+readRenviron("~/.Renviron")       
 
 
 # Get subject location data
 projString = "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs"
 
-location.dir = "/Volumes/kines-epl/EPL-GEO_BSERE/Data/WorkingData/Manish/subject_location/"
+location.dir = "/subject_location/"
 
 location.original = st_read(location.dir, 'subject_location_conus', stringsAsFactors = FALSE)
 location.original = st_transform(location.original, projString)
@@ -24,9 +24,8 @@ location.original = st_transform(location.original, projString)
 
 # For SF3 table we want counties for the year 2000
 
-county.data = st_read('/Volumes/kines-epl/EPL-GEO_BSERE/Data/OriginalData/Census/census-counties/2000/ tl_2010_us_county00/tl_2010_us_county00.shp')
+county.data = st_read('/tl_2010_us_county00.shp')
 county.data = county.data[c('STATEFP00', 'COUNTYFP00')]
-#county.data['GEOID10'] = as.character(county.data$GEOID10)
 county.data['STATEFP00'] = as.character(county.data$STATEFP00)
 county.data['COUNTYFP00'] = as.character(county.data$COUNTYFP00)
 
